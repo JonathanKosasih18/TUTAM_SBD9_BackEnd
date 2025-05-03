@@ -1,0 +1,25 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TYPE status AS ENUM ('PENDING', 'DONE', 'OVERDUE', 'IN PROGRESS');
+CREATE TYPE priority AS ENUM ('LOW', 'MEDIUM', 'HIGH', 'URGENT');
+CREATE TYPE category AS ENUM ('ACADEMIC', 'ORG', 'EVENT', 'PERSONAL', 'OTHERS');
+
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tasks (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    status status NOT NULL DEFAULT 'PENDING',
+    priority priority NOT NULL DEFAULT 'LOW',
+    category category NOT NULL DEFAULT 'OTHERS',
+    due_date TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
