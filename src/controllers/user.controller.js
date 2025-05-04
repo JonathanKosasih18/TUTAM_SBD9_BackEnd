@@ -7,25 +7,32 @@ const passRegex = /^(?=.*[^\s]{8,})(?=.*\d)(?=.*[^\w\d]).+$/;
 const saltRounds = 10;
 
 exports.createUser = async (req, res) => {
-    if (!req.query.username || !req.query.password || !req.query.email) {
+    const { username, password, email } = req.body; // ✅ Destructure from req.body
+
+    if (!username || !password || !email) {
         return baseResponse(res, false, 400, "Missing required fields", null);
     }
+
     try {
-        if (!emailRegex.test(req.query.email)) {
+        if (!emailRegex.test(email)) {
             return baseResponse(res, false, 400, "Invalid email format", null);
         }
-        if (await userRepo.getUserByEmail(req.query.email)) {
+
+        if (await userRepo.getUserByEmail(email)) {
             return baseResponse(res, false, 400, "Email already registered", null);
         }
-        if (!passRegex.test(req.query.password)) {
+
+        if (!passRegex.test(password)) {
             return baseResponse(res, false, 400, "Password must be at least 8 characters long and contain at least one number and one special character", null);
         }
-        const hashedPassword = await bcrypt.hash(req.query.password, saltRounds);
+
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
         const user = {
-            username: req.query.username,
+            username,
             password: hashedPassword,
-            email: req.query.email
+            email
         };
+
         const newUser = await userRepo.createUser(user);
         baseResponse(res, true, 201, "User created successfully", newUser);
     } catch (error) {
@@ -35,22 +42,24 @@ exports.createUser = async (req, res) => {
 }
 
 exports.loginUser = async (req, res) => {
-    if (!req.query.username || !req.query.password) {
+    const { username, password } = req.body; 
+    if (!username || !password) {
         return baseResponse(res, false, 400, "Missing required fields", null);
     }
+
     try {
-        const user = await userRepo.loginUser(req.query.username, req.query.password);
+        const user = await userRepo.loginUser(username, password);
         if (!user) {
             return baseResponse(res, false, 401, "Invalid username or password", null);
-        }
-        else {
+        } else {
             baseResponse(res, true, 200, "Login successful", user);
         }
     } catch (error) {
         console.error("Error logging in user:", error);
         baseResponse(res, false, 500, "Internal server error", null);
     }
-}
+};
+
 
 exports.getUserByEmail = async (req, res) => {
     try {
