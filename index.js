@@ -5,7 +5,7 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 3001;
 const corsOptions = {
-    origin: "https://os.netlabdte.com",
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
 };
 
