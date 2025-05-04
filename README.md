@@ -4,4 +4,4 @@
 
 This is the backend of the project. 
 - Visit the backend repository [here](https://github.com/JonathanKosasih18/TUTAM_SBD9_FrontEnd)
-- Visit the frontend deployment [here]()
+- Visit the frontend deployment [here](https://tutam-sbd-9-front-end.vercel.app/)

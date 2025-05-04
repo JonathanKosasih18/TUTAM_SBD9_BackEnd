@@ -7,7 +7,7 @@ const passRegex = /^(?=.*[^\s]{8,})(?=.*\d)(?=.*[^\w\d]).+$/;
 const saltRounds = 10;
 
 exports.createUser = async (req, res) => {
-    const { username, password, email } = req.body; // ✅ Destructure from req.body
+    const { username, password, email } = req.body;
 
     if (!username || !password || !email) {
         return baseResponse(res, false, 400, "Missing required fields", null);
